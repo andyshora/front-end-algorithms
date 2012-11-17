@@ -1,0 +1,26 @@
+body,h1,h2,h3,h4,h5 {
+font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+background:url(../img/dvsup.png) 0 0 repeat;
+color: rgb(187, 230, 236);
+}
+#body_wrap {
+    margin:30px auto;
+    width:1000px;
+}
+
+.cols_wrap {
+
+}
+.cols {
+    list-style-type: none;
+    margin:50px 0 0 0;
+    padding:0;
+    height:200px;
+}
+.col {
+    height:50px;
+    width:8px;
+    float: left;
+    margin:0 1px 0 0;
+    background: rgba(187, 230, 236, 0.93);
+}
