@@ -5,277 +5,2279 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="chrome=1">
         <META NAME="Description" CONTENT="Algorithms for front end developers in JavaScript and HTML5">
-
         <title>
             Algorithms for front end developers in JavaScript and HTML5
         </title>
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
         <link href="assets/css/main.css" rel="stylesheet" />
-        <link href="assets/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="assets/favicon.ico" rel="shortcut icon" type="image/x-icon"
+        />
+        <script src="assets/js/jquery-1.8.3.min.js">
 
-        <script src="assets/js/jquery-1.8.3.min.js"></script>
-        <script src="assets/js/jquery.easing.1.3.js"> </script>
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script src="algorithms.js"></script>
+        </script>
+        <script src="assets/js/jquery.easing.1.3.js">
+
+        </script>
+        <script src="assets/js/bootstrap.min.js">
+
+        </script>
+        <script src="algorithms.js">
+
+        </script>
         <script type="text/javascript">
-              $(function() {
+                var total = 1000;
+        $(function() {
 
-                $('#list_sort').click(function(){
-                  var array = ($('#list').val()).split(/ +/);
-                  algorithms.quick_sort(array);
-                  $('#list_sorted').val(array.join(' '));
-                });
+            $('#list_sort').click(function() {
+                var array = ($('#list').val()).split(/ +/);
+                algorithms.quick_sort(array);
+                $('#list_sorted').val(array.join(' '));
+            });
 
-                $('#ramdomize_arr').click(function(){
-                  randomize_cols();
-                });
-                $('#sort_arr').click(function(){
-
-                  algDOM.quick_sort();
-                });
-
+            $('#ramdomize_arr_rnd').click(function() {
                 randomize_cols();
+            });
+            $('#ramdomize_arr_odd').click(function() {
+                randomize_cols_almost();
+            });
+            $('#sort_arr_qs').click(function() {
 
-              });
+                algDOM.quick_sort();
+            });
 
-              function randomize_cols() {
-                var i = 0;
-                $('.col').each(function(){
-                  var rnd = Math.floor((Math.random()*200)+1);
-                  var rem = 200 - rnd;
-                  $(this)
-                    .css({ height: rnd+'px', marginTop: rem+'px'})
-                    .attr('n',rnd);
-                    i++;
+            randomize_cols();
+
+        });
+
+        function randomize_cols() {
+            var i = 0;
+            $('.col').each(function() {
+                var rnd = Math.floor((Math.random() * 200) + 1);
+                var rem = 200 - rnd;
+                $(this).css({
+                    height: rnd + 'px',
+                    marginTop: rem + 'px'
+                }).attr('n', rnd);
+                i++;
+            });
+        }
+
+        function randomize_cols_almost() {
+
+            var i = 0;
+            $('.col').each(function() {
+                var ih = Math.floor(i / 5);
+
+                var h = ih;
+
+                if (!(i % 100)) h = Math.floor((Math.random() * 200) + 1);
+
+                var rem = 200 - h;
+                $(this).css({
+                    height: h + 'px',
+                    marginTop: rem + 'px'
+                }).attr('n', h);
+                i++;
+            });
+        }
+
+        var dom_arr = [];
+
+
+        var algDOM = {
+            partition: function(start_index, end_index, pivot_index) {
+                var pivot_val = dom_arr[pivot_index].val;
+                //console.log("------------------------- pivot index: " + pivot_index + " val: " + pivot_val);
+                this.swap(pivot_index, end_index - 1);
+                var store = start_index;
+                var ix;
+                for (ix = start_index; ix < end_index - 1; ++ix) {
+                    if (dom_arr[ix].val <= pivot_val) {
+                        this.swap(store, ix);
+                        ++store;
+                    }
+                }
+                this.swap(end_index - 1, store);
+
+                return store;
+            },
+            swap: function(index_a, index_b) {
+
+                dom_arr.algorithms_swap(index_a, index_b);
+
+            },
+            qsort: function(start_index, end_index) {
+
+                if (end_index - 1 > start_index) {
+                    var pivot_index = start_index + Math.floor(Math.random() * (end_index - start_index));
+                    //console.log("------------------------- pivot index: " + pivot_index);
+                    pivot_index = this.partition(start_index, end_index, pivot_index);
+
+                    //setTimeout("algDOM.qsort("+start_index+", "+pivot_index+");algDOM.qsort("+pivot_index+1+", "+end_index+");",200);
+                    this.qsort(start_index, pivot_index);
+                    this.qsort(pivot_index + 1, end_index);
+                } else {
+                    //console.log('terminating, end_index:' + end_index + ', start_index:' + start_index);
+                }
+            },
+            init_arr: function() {
+
+                dom_arr = [];
+                $('#cols1>li.col').each(function() {
+                    var n = parseInt($(this).attr('n'));
+                    var html = $(this).html();
+
+                    dom_arr.push({
+                        val: n,
+                        innerHTML: html
+                    });
                 });
-              }
-              var dom_arr = [];
 
-              var algDOM = {
-                partition : function (start_index, end_index, pivot_index)
-                {
-                    var pivot_val = dom_arr[pivot_index].val;
-                    console.log("------------------------- pivot index: " + pivot_index + " val: " + pivot_val);
+            },
+            quick_sort: function() {
+                this.init_arr();
+                this.qsort(0, dom_arr.length);
 
-                    this.swap(pivot_index, end_index-1);
-                    var store = start_index;
-                    var ix;
-                    for(ix = start_index; ix < end_index-1; ++ix) {
-                        if(dom_arr[ix].val <= pivot_val) {
-                            this.swap(store, ix);
-                            ++store;
-                        }
-                    }
-                    this.swap(end_index-1, store);
+                var str = "";
+                for (var i = 0; i < dom_arr.length; i++) {
+                    str += '<li class="col" style="height:' + dom_arr[i].val + 'px;margin-top:' + (200 - dom_arr[i].val) + 'px;" n="' + dom_arr[i].val + '">' + dom_arr[i].innerHTML + '</li>';
+                }
 
-                    return store;
-                },
-                swap : function(index_a, index_b) {
-
-                  dom_arr.algorithms_swap(index_a, index_b);
-
-                },
-                qsort : function(start_index, end_index)
-                {
-
-                    if(end_index-1 > start_index) {
-                        var pivot_index = start_index + Math.floor(Math.random()*(end_index-start_index));
-                        console.log("------------------------- pivot index: " + pivot_index);
-
-                        pivot_index = this.partition(start_index, end_index, pivot_index);
-
-                        //setTimeout("algDOM.qsort("+start_index+", "+pivot_index+");algDOM.qsort("+pivot_index+1+", "+end_index+");",200);
-                        this.qsort(start_index, pivot_index);
-                        this.qsort(pivot_index+1, end_index);
-                    } else {
-                      console.log('terminating, end_index:'+end_index + ', start_index:'+start_index);
-                    }
-                },
-                init_arr : function() {
-
-                  dom_arr = [];
-                  $('#cols1>li.col').each(function(){
-                      var n = parseInt($(this).attr('n'));
-                      var html = $(this).html();
-
-                      dom_arr.push({ val: n, innerHTML: html });
-                  });
-
-                },
-                quick_sort : function()
-                {
-                    this.init_arr();
-                    this.qsort(0, dom_arr.length);
-
-                    var str = "";
-                    for(var i=0; i<dom_arr.length; i++){
-                      str +=    '<li class="col" style="height:'+dom_arr[i].val+'px;margin-top:'+(200-dom_arr[i].val)+'px;" n="'+dom_arr[i].val+'">'+dom_arr[i].innerHTML+'</li>';
-                    }
-
-                    $('#cols1').html(str);
-                },
+                $('#cols1').html(str);
+            },
 
 
-              }
-
-              // algorithm is terminating early, with the final pivot being near the very end of the elements, and the end elements being sorted
-
+        }
         </script>
     </head>
 
     <body>
-      <div id="body_wrap">
-
-      <h1>Algorithms for front end developers in JavaScript and HTML5</h1>
-
-      <div class="container">
-        <div class="row">
-          <div class="span12">
-
-          <p>When sorting DOM objects that acutally occupy a position in the UI (as opposed to an array of numbers) we are presented with a performance problem. DOM interactions are expensive, so we need to miminize the number of DOM interactions ideally to just two; the beginning and the end of the sorting operation.</p>
-          <p>For example, if we have an unordered list <span class="code">&lt;ul&gt;</span> filled with 100 list items <span class="code">&lt;li&gt;</span> which we need to sort by the values inside the list, we do not want to be interacting with the DOM hundreds of times, as required by a native sorting algorithm being passed an array by reference.</p>
-          <p>For this problem, we want to get the entire contents of the items to be sorted (the hundred <span class="code">&lt;li&gt;</span>'s), initiallise them into an array, containing the contents of each item and the key to sort by, sort the array, and finally inject the sorted items back into the DOM.</p>
-          <p>Copying the items into an array will take up some memory, but comparing this to the memory and CPU taken up by hundreds of DOM interactions makes it a no-brainer.</p>
-
-          </div>
+        <div id="body_wrap">
+            <h1>
+                Algorithms for front end developers in JavaScript and HTML5
+            </h1>
+            <div class="container">
+                <div class="row">
+                    <div class="span12">
+                        <p>
+                            When sorting DOM objects that acutally occupy a position in the UI (as
+                            opposed to an array of numbers) we are presented with a performance problem.
+                            DOM interactions are expensive, so we need to miminize the number of DOM
+                            interactions ideally to just two; the beginning and the end of the sorting
+                            operation.
+                        </p>
+                        <p>
+                            For example, if we have an unordered list
+                            <span class="code">
+                                &lt;ul&gt;
+                            </span>
+                            filled with 100 list items
+                            <span class="code">
+                                &lt;li&gt;
+                            </span>
+                            which we need to sort by the values inside the list, we do not want to
+                            be interacting with the DOM hundreds of times, as required by a native
+                            sorting algorithm being passed an array by reference.
+                        </p>
+                        <p>
+                            For this problem, we want to get the entire contents of the items to be
+                            sorted (the hundred
+                            <span class="code">
+                                &lt;li&gt;
+                            </span>
+                            's), initiallise them into an array, containing the contents of each item
+                            and the key to sort by, sort the array, and finally inject the sorted items
+                            back into the DOM.
+                        </p>
+                        <p>
+                            Copying the items into an array will take up some memory, but comparing
+                            this to the memory and CPU taken up by hundreds of DOM interactions makes
+                            it a no-brainer.
+                        </p>
+                    </div>
+                </div>
+                <div class="row algorithm-row">
+                    <div class="span12">
+                        <h3>
+                            QuickSort
+                        </h3>
+                        <p>
+                            Quicksort is a divide and conquer algorithm. Quicksort first divides a
+                            large list into two smaller sub-lists: the low elements and the high elements,
+                            and it then recursively sorts the sub-lists via the same method.
+                        </p>
+                        <h4>
+                            Efficient when:
+                        </h4>
+                        <ul>
+                            <li>
+                                Elements are in a random order
+                            </li>
+                        </ul>
+                        <h4>
+                            Inefficient when:
+                        </h4>
+                        <ul>
+                            <li>
+                                Elements are relatively sorted. For example, an algorithm like bubble
+                                sort may be better suited to a sorted list containing one or two elements
+                                which are not in the correct position.
+                            </li>
+                        </ul>
+                        <h4>
+                            Potential issues:
+                        </h4>
+                        <ul>
+                            <li>
+                                If you are sorting via an attribute on DOM elements, like I am below
+                                <span class="code">
+                                    &lt;li n="45"&gt;&lt;li&gt;
+                                </span>
+                                , remember to parse the values as integers prior to sorting.
+                            </li>
+                            <li>
+                                If the sort operation is going to take longer than 0.2s, consider displaying
+                                an indicator to the user, to provide feedback from the UI and mimimise
+                                frustration.
+                            </li>
+                        </ul>
+                        <div class="cols_wrap">
+                            <i>
+                                1000 random elements
+                            </i>
+                            <ul id="cols1" class="cols">
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                                <li class="col">
+                                </li>
+                            </ul>
+                        </div>
+                        <button id="ramdomize_arr_rnd" class="btn">
+                            Randomize Array (random distribution)
+                        </button>
+                        <button id="ramdomize_arr_odd" class="btn">
+                            Randomize Array (almost sorted)
+                        </button>
+                        <br />
+                        <button id="sort_arr_qs" class="btn btn-info">
+                            Sort Array (Quicksort)
+                        </button>
+                        <button id="sort_arr_bs" class="btn btn-info">
+                            Sort Array (Bubble Sort)
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <h3>
+                        Sorting Text
+                    </h3>
+                    <input type="text" id="list" value="56 45 46 4 2 434 54 646 5 65 45 3 43 43 53 53"
+                    />
+                    <i class="icon icon-chevron-right">
+                    </i>
+                    <input type="text" id="list_sorted" />
+                    <button class="btn btn-primary" id="list_sort">
+                        Sort
+                    </button>
+                </div>
+            </div>
         </div>
-
-        <div class="row algorithm-row">
-          <div class="span12">
-              <h3>QuickSort</h3>
-              <p>Quicksort is a divide and conquer algorithm. Quicksort first divides a large list into two smaller sub-lists: the low elements and the high elements, and it then recursively sorts the sub-lists via the same method.</p>
-
-
-              <div class="cols_wrap">
-                  <i>50 random elements</i>
-                  <ul id="cols1" class="cols">
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-                    <li class="col"></li>
-
-                  </ul>
-
-              </div>
-
-                  <button id="ramdomize_arr" class="btn btn-large">Randomize Array</button>
-                  <button id="sort_arr" class="btn btn-large btn-info">Sort Array</button>
-
-
-          </div>
-
-
-
-
-        </div>
-          <div class="row">
-              <h3>Sorting Text</h3>
-               <input type="text" id="list" value="56 45 46 4 2 434 54 646 5 65 45 3 43 43 53 53" /> <i class="icon icon-chevron-right"></i> <input type="text" id="list_sorted" />
-                <button class="btn btn-primary" id="list_sort">Sort</button>
-
-          </div>
-
-
-      </div>
-
-
-    </div>
     </body>
 
 </html>
