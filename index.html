@@ -4,9 +4,9 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="chrome=1">
-        <META NAME="Description" CONTENT="Algorithms for front end developers in JavaScript and HTML5">
+        <META NAME="Description" CONTENT="Algorithms for front end developers in JavaScript">
         <title>
-            Algorithms for front end developers in JavaScript and HTML5
+            Algorithms for front end developers in JavaScript
         </title>
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
         <link href="assets/css/main.css" rel="stylesheet" />
@@ -41,8 +41,10 @@
                 randomize_cols_almost();
             });
             $('#sort_arr_qs').click(function() {
-
                 algDOM.quick_sort();
+            });
+            $('#sort_arr_bs').click(function() {
+                algDOM.bubble_sort();
             });
 
             randomize_cols();
@@ -82,7 +84,7 @@
         }
 
         var dom_arr = [];
-
+        var c = 0;
 
         var algDOM = {
             partition: function(start_index, end_index, pivot_index) {
@@ -92,6 +94,7 @@
                 var store = start_index;
                 var ix;
                 for (ix = start_index; ix < end_index - 1; ++ix) {
+                  c++;
                     if (dom_arr[ix].val <= pivot_val) {
                         this.swap(store, ix);
                         ++store;
@@ -121,7 +124,7 @@
                 }
             },
             init_arr: function() {
-
+                c=0;
                 dom_arr = [];
                 $('#cols1>li.col').each(function() {
                     var n = parseInt($(this).attr('n'));
@@ -144,7 +147,35 @@
                 }
 
                 $('#cols1').html(str);
+                $('#comps').html('Comparisons: ' + c);
             },
+
+            bubble_sort: function()  {
+
+              this.init_arr();
+
+                var swapped;
+                do {
+                    swapped = false;
+                    for (var i=0; i < dom_arr.length-1; i++) {
+
+                        if (dom_arr[i].val > dom_arr[i+1].val) {
+
+                            this.swap(i,i+1);
+                            c++;
+                            swapped = true;
+                        }
+                    }
+                } while (swapped);
+
+                var str = "";
+                for (var i = 0; i < dom_arr.length; i++) {
+                    str += '<li class="col" style="height:' + dom_arr[i].val + 'px;margin-top:' + (200 - dom_arr[i].val) + 'px;" n="' + dom_arr[i].val + '">' + dom_arr[i].innerHTML + '</li>';
+                }
+
+                $('#cols1').html(str);
+                $('#comps').html('Comparisons: ' + c);
+            }
 
 
         }
@@ -154,7 +185,7 @@
     <body>
         <div id="body_wrap">
             <h1>
-                Algorithms for front end developers in JavaScript and HTML5
+                Algorithms for front end developers in JavaScript
             </h1>
             <div class="container">
                 <div class="row">
@@ -219,9 +250,7 @@
                         </h4>
                         <ul>
                             <li>
-                                Elements are relatively sorted. For example, an algorithm like bubble
-                                sort may be better suited to a sorted list containing one or two elements
-                                which are not in the correct position.
+                                Elements are substantially sorted (having a small number of inversions). For example, an algorithm like bubble sort may be better suited to a sorted list containing one or two elements which are not in the correct position.
                             </li>
                         </ul>
                         <h4>
@@ -243,8 +272,10 @@
                         </ul>
                         <div class="cols_wrap">
                             <i>
-                                1000 random elements
+                                n:1000
                             </i>
+                              <i id="comps"></i>
+
                             <ul id="cols1" class="cols">
                                 <li class="col">
                                 </li>
