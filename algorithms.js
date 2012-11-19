@@ -39,6 +39,22 @@ var algorithms = {
     quick_sort : function(array)
     {
         this.qsort(array, 0, array.length);
+    },
+    bubble_sort: function(array)  {
+
+        var swapped;
+        do {
+            swapped = false;
+            for (var i=0; i < array.length-1; i++) {
+
+                if (array[i] > array[i+1]) {
+
+                    array.algorithms_swap(i,i+1);
+                    swapped = true;
+                }
+            }
+        } while (swapped);
+
     }
 }
 
