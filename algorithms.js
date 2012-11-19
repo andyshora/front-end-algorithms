@@ -6,6 +6,8 @@ Array.prototype.algorithms_swap=function(a, b)
     this[b]=tmp;
 }
 
+
+
 var algorithms = {
     partition : function (array, start_index, end_index, pivot_index)
     {
@@ -36,7 +38,6 @@ var algorithms = {
     },
     quick_sort : function(array)
     {
-        //this.swap_function = swap_function;
         this.qsort(array, 0, array.length);
     }
 }

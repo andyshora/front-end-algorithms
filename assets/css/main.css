@@ -9,18 +9,29 @@ color: rgb(187, 230, 236);
 }
 
 .cols_wrap {
-
+    width:1000px;
+    height:250px;
+    background: rgba(255,255,255,0.1);
+    overflow-x:auto;
 }
 .cols {
     list-style-type: none;
-    margin:50px 0 0 0;
+    margin:20px 0 0 0;
     padding:0;
     height:200px;
+    width:10000px;
 }
 .col {
     height:50px;
-    width:8px;
+    width:9px;
     float: left;
     margin:0 1px 0 0;
     background: rgba(187, 230, 236, 0.93);
+    border-radius:2px 2px 0 0;
+}
+.col.pivot {
+    background:red;
+}
+.col.swapping {
+    background:yellow;
 }
